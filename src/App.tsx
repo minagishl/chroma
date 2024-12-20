@@ -60,8 +60,6 @@ function Layout() {
   const [prompt, setPrompt] = useState<string>("");
 
   useEffect(() => {
-    console.log(selectTags);
-
     setPrompt(
       Object.entries(selectTags)
         .map(([tag, value]) => {
