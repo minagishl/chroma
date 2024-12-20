@@ -5,6 +5,7 @@ import type { Options } from "./context";
 import { options } from "./context";
 import { HiOutlineTrash } from "react-icons/hi";
 import { Group, IconButton } from "@chakra-ui/react";
+import copy from "copy-to-clipboard";
 
 function App() {
   return (
@@ -146,7 +147,7 @@ function Layout() {
             />
           </Box>
           <Group attached flexShrink={0}>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => copy(prompt)}>
               Copy
             </Button>
             <IconButton variant="outline" size="sm">
