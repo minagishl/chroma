@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Box, Theme, Stack, Text, Input } from "@chakra-ui/react";
+import { VStack, Box, Theme, Stack, Text, Input } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import type { Options } from "./context";
 import { options } from "./context";
 import { HiOutlineTrash } from "react-icons/hi";
 import { Group, IconButton } from "@chakra-ui/react";
 import copy from "copy-to-clipboard";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 function App() {
   return (
@@ -26,11 +27,12 @@ function App() {
   );
 }
 
-// Record creation logic
 interface RecordType {
   [key: number]: {
     tag: string;
+    ja: string;
     en: string;
+    zh: string;
   }[];
 }
 
@@ -41,7 +43,9 @@ const createRecordFromOptions = (options: Options): RecordType => {
     }
     record[tagEntry.class_id].push({
       tag: tagEntry.tag,
+      ja: tagEntry.ja,
       en: tagEntry.en,
+      zh: tagEntry.zh,
     });
     return record;
   }, {});
@@ -54,9 +58,25 @@ type selectTags = {
   [key: string]: number;
 };
 
+const Select = ({ setValue }: { setValue: (value: string) => void }) => {
+  return (
+    <Stack gap="5" align="flex-start">
+      <VStack key="sm" align="flex-start">
+        <SegmentedControl
+          size="sm"
+          defaultValue="EN"
+          items={["EN", "JA", "ZH"]}
+          onValueChange={(e) => setValue(e.value)}
+        />
+      </VStack>
+    </Stack>
+  );
+};
+
 function Layout() {
   const [isSelect, setIsSelect] = useState<number>(0);
   const [selectTags, setSelectTags] = useState<selectTags>({});
+  const [Language, setLanguage] = useState<string>("EN");
   const [prompt, setPrompt] = useState<string>("");
 
   useEffect(() => {
@@ -85,6 +105,12 @@ function Layout() {
         maxW={64}
       >
         <Text fontWeight="medium" paddingInlineStart={4} fontSize="sm">
+          Language
+        </Text>
+        <Box padding={4}>
+          <Select setValue={setLanguage} />
+        </Box>
+        <Text fontWeight="medium" paddingInlineStart={4} fontSize="sm">
           Options
         </Text>
         <Stack mt={2} flexDir="column" gap={0}>
@@ -92,14 +118,17 @@ function Layout() {
             <Stack key={key} mt={2} flexDir="column" gap={0}>
               <Button
                 variant={isSelect === Number(key) ? "subtle" : "ghost"}
-                w="full"
                 justifyContent="start"
                 size="sm"
                 paddingInlineStart={4}
                 color="fg.muted"
                 onClick={() => setIsSelect(Number(key))}
               >
-                {classification.filter((item) => item.id === Number(key))[0].en}
+                {
+                  classification.filter((item) => item.id === Number(key))[0][
+                    Language.toLowerCase() as "en" | "ja" | "zh"
+                  ]
+                }
               </Button>
             </Stack>
           ))}
@@ -130,7 +159,9 @@ function Layout() {
               }}
               cursor="pointer"
             >
-              <Text fontWeight="bold">{item.en}</Text>
+              <Text fontWeight="bold">
+                {item[Language.toLowerCase() as "en" | "ja" | "zh"]}
+              </Text>
             </Button>
           ))}
         </Stack>
