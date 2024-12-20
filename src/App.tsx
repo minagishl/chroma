@@ -179,7 +179,11 @@ function Layout() {
             <Button variant="outline" size="sm" onClick={() => copy(prompt)}>
               Copy
             </Button>
-            <IconButton variant="outline" size="sm">
+            <IconButton
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectTags({})}
+            >
               <HiOutlineTrash />
             </IconButton>
           </Group>
